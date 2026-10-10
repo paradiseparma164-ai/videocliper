@@ -1,0 +1,39 @@
+{
+  "routes": [
+    {
+      "method": "GET",
+      "path": "/",
+      "description": "Marketing page"
+    },
+    {
+      "method": "GET",
+      "path": "/app",
+      "description": "Studio dashboard"
+    },
+    {
+      "method": "POST",
+      "path": "/api/auth/signup",
+      "description": "Create an account"
+    },
+    {
+      "method": "POST",
+      "path": "/api/auth/login",
+      "description": "Sign in"
+    },
+    {
+      "method": "GET",
+      "path": "/api/projects",
+      "description": "List projects"
+    },
+    {
+      "method": "POST",
+      "path": "/api/projects",
+      "description": "Create a project"
+    },
+    {
+      "method": "POST",
+      "path": "/api/projects/:id/render",
+      "description": "Render the project to a video"
+    }
+  ]
+}

@@ -1,0 +1,15 @@
+{
+  "name": "videocliper",
+  "version": "1.0.0",
+  "private": true,
+  "type": "commonjs",
+  "description": "ClipForge Studio — rights-safe short-form video editor and publishing cockpit",
+  "engines": {
+    "node": ">=22.5.0"
+  },
+  "scripts": {
+    "start": "node --no-warnings server.js",
+    "dev": "node --no-warnings server.js",
+    "test": "node --test test/api.test.js"
+  }
+}

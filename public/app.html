@@ -1,0 +1,134 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>ClipForge Studio</title>
+    <link rel="stylesheet" href="/styles.css" />
+  </head>
+  <body class="app-body">
+    <div id="authView" class="auth-shell">
+      <div class="auth-card">
+        <div class="brand-line">
+          <div class="brand-mark">CF</div>
+          <div>
+            <div class="brand-name">ClipForge Studio</div>
+            <div class="brand-tag">rights-safe creator cockpit</div>
+          </div>
+        </div>
+
+        <div class="auth-actions">
+          <button id="showLogin" class="active" type="button">Sign in</button>
+          <button id="showSignup" type="button">Create account</button>
+        </div>
+
+        <form id="authForm">
+          <input id="emailInput" type="email" placeholder="you@example.com" required />
+          <input id="passwordInput" type="password" placeholder="Password" required />
+          <button id="submitAuth" type="submit">Continue</button>
+        </form>
+
+        <div id="authMessage" class="message hidden"></div>
+      </div>
+    </div>
+
+    <div id="appView" class="app-shell hidden">
+      <aside class="sidebar">
+        <div class="brand-line">
+          <div class="brand-mark">CF</div>
+          <div>
+            <div class="brand-name">ClipForge Studio</div>
+            <div class="brand-tag">Creator cockpit</div>
+          </div>
+        </div>
+
+        <nav>
+          <a href="#" class="active">Dashboard</a>
+          <a href="#">Editor</a>
+          <a href="#">Reference Lab</a>
+          <a href="#">Reality Generator</a>
+          <a href="#">Distribution</a>
+        </nav>
+
+        <div class="form-card">
+          <h3>New project</h3>
+          <input id="projectTitle" type="text" placeholder="Project title" />
+          <input id="projectPlatform" type="text" placeholder="Platform: YouTube / TikTok / Reels" />
+          <textarea id="projectRights" rows="3" placeholder="Ownership confirmation note"></textarea>
+          <label><input id="rightsConfirmed" type="checkbox" /> I confirm rights</label>
+          <input id="musicTitle" type="text" placeholder="Music title" />
+          <input id="musicLicense" type="text" placeholder="License" />
+          <label><input id="musicPermission" type="checkbox" /> Permission granted</label>
+          <button id="createProjectBtn" type="button">Save project</button>
+        </div>
+
+        <div class="form-card">
+          <h3>Quick actions</h3>
+          <button id="logoutBtn" type="button">Sign out</button>
+          <button id="logoutEverywhereBtn" type="button">Sign out everywhere</button>
+        </div>
+      </aside>
+
+      <main class="main-panel">
+        <div class="top-actions">
+          <div>
+            <div class="eyebrow">Studio</div>
+            <h2 id="welcomeTitle">Welcome</h2>
+          </div>
+          <div class="status-pill ready">Local mode</div>
+        </div>
+
+        <div class="kpi-grid">
+          <div class="kpi">
+            <label>Projects</label>
+            <strong id="projectCount">0</strong>
+          </div>
+          <div class="kpi">
+            <label>Ready for review</label>
+            <strong id="reviewCount">0</strong>
+          </div>
+          <div class="kpi">
+            <label>Scheduled</label>
+            <strong id="scheduledCount">0</strong>
+          </div>
+          <div class="kpi">
+            <label>Platform links</label>
+            <strong id="platformCount">0</strong>
+          </div>
+        </div>
+
+        <div class="content-grid">
+          <section class="card">
+            <h3>Projects</h3>
+            <div id="projectList" class="list"></div>
+          </section>
+
+          <section class="card">
+            <h3>Reference Lab</h3>
+            <input id="refSource" type="text" placeholder="Paste page, account or source link" />
+            <button id="analyzeReferenceBtn" type="button">Analyze reference</button>
+            <div id="referenceOutput" class="message hidden"></div>
+
+            <h3 style="margin-top: 16px;">Reality Generator</h3>
+            <select id="generatorMode">
+              <option value="photorealistic">Photorealistic</option>
+              <option value="cartoon3d">3D Cartoon</option>
+              <option value="animation">Animation</option>
+              <option value="sports">Sports</option>
+            </select>
+            <button id="generatorBriefBtn" type="button">Generate brief</button>
+            <div id="generatorOutput" class="message hidden"></div>
+
+            <h3 style="margin-top: 16px;">Platform links</h3>
+            <button id="connectYoutube" type="button">Connect YouTube</button>
+            <button id="connectTikTok" type="button">Connect TikTok</button>
+            <button id="connectInstagram" type="button">Connect Instagram</button>
+            <div id="platformOutput" class="message hidden"></div>
+          </section>
+        </div>
+      </main>
+    </div>
+
+    <script src="/app.js"></script>
+  </body>
+</html>
