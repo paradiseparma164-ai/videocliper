@@ -1,270 +1,142 @@
-const authView = document.getElementById('authView');
-const appView = document.getElementById('appView');
-const authForm = document.getElementById('authForm');
-const authMessage = document.getElementById('authMessage');
-const showLoginBtn = document.getElementById('showLogin');
-const showSignupBtn = document.getElementById('showSignup');
-const emailInput = document.getElementById('emailInput');
-const passwordInput = document.getElementById('passwordInput');
-const projectList = document.getElementById('projectList');
-const projectCount = document.getElementById('projectCount');
-const reviewCount = document.getElementById('reviewCount');
-const scheduledCount = document.getElementById('scheduledCount');
-const platformCount = document.getElementById('platformCount');
-const welcomeTitle = document.getElementById('welcomeTitle');
-
-let authMode = 'login';
-let csrfToken = '';
-
-function setMessage(element, text, type = 'info') {
-  element.textContent = text;
-  element.classList.remove('hidden');
-  element.classList.remove('success', 'error');
-  if (type === 'success') element.classList.add('success');
-  if (type === 'error') element.classList.add('error');
-}
-
-function clearMessage(element) {
-  element.textContent = '';
-  element.classList.add('hidden');
-}
-
-async function apiRequest(url, options = {}) {
-  const headers = { ...(options.headers || {}) };
-  if (!headers['Content-Type'] && !(options.body instanceof FormData)) {
-    headers['Content-Type'] = 'application/json';
-  }
-  if (csrfToken) headers['x-csrf-token'] = csrfToken;
-
-  const response = await fetch(url, { ...options, headers });
-  const contentType = response.headers.get('content-type') || '';
-  const payload = contentType.includes('application/json') ? await response.json() : await response.text();
-
-  if (!response.ok) {
-    throw new Error(payload.error || payload || 'Request failed');
-  }
-
-  return payload;
-}
-
-function setAuthMode(mode) {
-  authMode = mode;
-  showLoginBtn.classList.toggle('active', mode === 'login');
-  showSignupBtn.classList.toggle('active', mode === 'signup');
-  const submitButton = authForm.querySelector('button[type="submit"]');
-  submitButton.textContent = mode === 'login' ? 'Sign in' : 'Create account';
-}
-
-async function checkSession() {
-  try {
-    const session = await apiRequest('/api/session');
-    if (session.user) {
-      welcomeTitle.textContent = `Welcome, ${session.user.email}`;
-      authView.classList.add('hidden');
-      appView.classList.remove('hidden');
-      loadProjects();
-      loadPlatforms();
-      return;
-    }
-  } catch (error) {
-    console.warn('No active session');
-  }
-
-  authView.classList.remove('hidden');
-  appView.classList.add('hidden');
-}
-
-showLoginBtn.addEventListener('click', () => setAuthMode('login'));
-showSignupBtn.addEventListener('click', () => setAuthMode('signup'));
-
-authForm.addEventListener('submit', async (event) => {
-  event.preventDefault();
-  clearMessage(authMessage);
-
-  const email = emailInput.value.trim();
-  const password = passwordInput.value.trim();
-
-  try {
-    const endpoint = authMode === 'login' ? '/api/auth/login' : '/api/auth/signup';
-    const data = await apiRequest(endpoint, {
-      method: 'POST',
-      body: JSON.stringify({ email, password }),
-    });
-
-    csrfToken = data.csrfToken || '';
-    welcomeTitle.textContent = `Welcome, ${data.user.email}`;
-    authView.classList.add('hidden');
-    appView.classList.remove('hidden');
-    emailInput.value = '';
-    passwordInput.value = '';
-    loadProjects();
-    loadPlatforms();
-  } catch (error) {
-    setMessage(authMessage, error.message, 'error');
-  }
-});
-
-async function loadProjects() {
-  try {
-    const data = await apiRequest('/api/projects');
-    const projects = data.projects || [];
-    projectCount.textContent = String(projects.length);
-    reviewCount.textContent = String(projects.filter((project) => ['approved', 'ready_for_review'].includes(project.status)).length);
-    scheduledCount.textContent = String(projects.filter((project) => project.status === 'scheduled').length);
-
-    if (!projects.length) {
-      projectList.innerHTML = '<div class="item">No projects yet. Create one from the left panel.</div>';
-      return;
-    }
-
-    projectList.innerHTML = projects.map((project) => `
-      <div class="item">
-        <strong>${project.title}</strong>
-        <div>Platform: ${project.platform}</div>
-        <div>Rights: ${project.rightsConfirmed ? 'confirmed' : 'missing'}</div>
-        <span class="status ${project.status === 'approved' ? 'approved' : project.status === 'failed' ? 'failed' : 'draft'}">${project.status || 'draft'}</span>
-        <div class="project-actions">
-          <button type="button" data-render-id="${project.id}">Render</button>
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>ClipForge Studio</title>
+    <link rel="stylesheet" href="/styles.css" />
+  </head>
+  <body class="app-body">
+    <div id="authView" class="auth-shell">
+      <div class="auth-card">
+        <div class="brand-line">
+          <div class="brand-mark">CF</div>
+          <div>
+            <div class="brand-name">ClipForge Studio</div>
+            <div class="brand-tag">rights-safe creator cockpit</div>
+          </div>
         </div>
+
+        <div class="auth-actions">
+          <button id="showLogin" class="active" type="button">Sign in</button>
+          <button id="showSignup" type="button">Create account</button>
+        </div>
+
+        <form id="authForm">
+          <input id="emailInput" type="email" placeholder="you@example.com" required />
+          <input id="passwordInput" type="password" placeholder="Password" required />
+          <button type="submit">Continue</button>
+        </form>
+
+        <div id="authMessage" class="message hidden"></div>
       </div>
-    `).join('');
+    </div>
 
-    projectList.querySelectorAll('[data-render-id]').forEach((button) => {
-      button.addEventListener('click', async () => {
-        try {
-          const result = await apiRequest(`/api/projects/${button.dataset.renderId}/render`, {
-            method: 'POST',
-            body: JSON.stringify({}),
-          });
-          setMessage(document.getElementById('platformOutput'), `Render: ${result.render.status} — ${result.render.message}`, result.render.status === 'rendered' ? 'success' : 'error');
-          loadProjects();
-        } catch (error) {
-          setMessage(document.getElementById('platformOutput'), error.message, 'error');
-        }
-      });
-    });
-  } catch (error) {
-    console.error('Failed to load projects', error);
-  }
-}
+    <div id="appView" class="app-shell hidden">
+      <aside class="sidebar">
+        <div class="brand-line">
+          <div class="brand-mark">CF</div>
+          <div>
+            <div class="brand-name">ClipForge Studio</div>
+            <div class="brand-tag">creator cockpit</div>
+          </div>
+        </div>
 
-async function loadPlatforms() {
-  try {
-    const data = await apiRequest('/api/platforms');
-    const count = Object.keys(data.platforms || {}).length;
-    platformCount.textContent = String(count);
-  } catch (error) {
-    platformCount.textContent = '0';
-  }
-}
+        <nav>
+          <a href="#" class="active">Dashboard</a>
+          <a href="#">Editor</a>
+          <a href="#">Reference Lab</a>
+          <a href="#">Reality Generator</a>
+          <a href="#">Distribution</a>
+        </nav>
 
-document.getElementById('createProjectBtn').addEventListener('click', async () => {
-  const payload = {
-    title: document.getElementById('projectTitle').value.trim(),
-    platform: document.getElementById('projectPlatform').value.trim() || 'YouTube',
-    ownershipConfirmation: document.getElementById('projectRights').value.trim(),
-    rightsConfirmed: document.getElementById('rightsConfirmed').checked,
-    musicTitle: document.getElementById('musicTitle').value.trim() || null,
-    musicLicense: document.getElementById('musicLicense').value.trim() || null,
-    musicPermission: document.getElementById('musicPermission').checked,
-  };
+        <div class="form-card">
+          <h3>New project</h3>
+          <input id="projectTitle" type="text" placeholder="Project title" />
+          <input id="projectPlatform" type="text" placeholder="YouTube / TikTok / Reels" />
+          <textarea id="projectRights" rows="3" placeholder="Ownership confirmation note"></textarea>
+          <label class="checkbox-row"><input id="rightsConfirmed" type="checkbox" /> I confirm rights</label>
+          <input id="musicTitle" type="text" placeholder="Music title" />
+          <input id="musicLicense" type="text" placeholder="License" />
+          <label class="checkbox-row"><input id="musicPermission" type="checkbox" /> Permission granted</label>
+          <button id="createProjectBtn" type="button">Save project</button>
+        </div>
 
-  try {
-    await apiRequest('/api/projects', {
-      method: 'POST',
-      body: JSON.stringify(payload),
-    });
+        <div class="form-card">
+          <h3>Upload footage</h3>
+          <input id="uploadFileName" type="text" placeholder="Clip name" />
+          <input id="uploadFileType" type="text" placeholder="video/mp4" />
+          <input id="uploadFileSize" type="number" min="0" placeholder="File size in bytes" />
+          <button id="attachUploadBtn" type="button">Attach footage</button>
+        </div>
 
-    document.getElementById('projectTitle').value = '';
-    document.getElementById('projectPlatform').value = '';
-    document.getElementById('projectRights').value = '';
-    document.getElementById('rightsConfirmed').checked = false;
-    document.getElementById('musicTitle').value = '';
-    document.getElementById('musicLicense').value = '';
-    document.getElementById('musicPermission').checked = false;
-    loadProjects();
-  } catch (error) {
-    setMessage(document.getElementById('platformOutput'), error.message, 'error');
-  }
-});
+        <div class="form-card">
+          <h3>Quick actions</h3>
+          <button id="logoutBtn" type="button">Sign out</button>
+          <button id="logoutEverywhereBtn" type="button">Sign out everywhere</button>
+        </div>
+      </aside>
 
-document.getElementById('logoutBtn').addEventListener('click', async () => {
-  try {
-    await apiRequest('/api/auth/logout', { method: 'POST' });
-    csrfToken = '';
-    checkSession();
-  } catch (error) {
-    console.error(error);
-  }
-});
+      <main class="main-panel">
+        <div class="top-actions">
+          <div>
+            <div class="eyebrow">Studio</div>
+            <h2 id="welcomeTitle">Welcome</h2>
+          </div>
+          <div class="status-pill ready">Local production mode</div>
+        </div>
 
-document.getElementById('logoutEverywhereBtn').addEventListener('click', async () => {
-  try {
-    await apiRequest('/api/auth/logout-everywhere', { method: 'POST' });
-    csrfToken = '';
-    checkSession();
-  } catch (error) {
-    console.error(error);
-  }
-});
+        <div class="kpi-grid">
+          <div class="kpi">
+            <label>Projects</label>
+            <strong id="projectCount">0</strong>
+          </div>
+          <div class="kpi">
+            <label>Ready</label>
+            <strong id="reviewCount">0</strong>
+          </div>
+          <div class="kpi">
+            <label>Scheduled</label>
+            <strong id="scheduledCount">0</strong>
+          </div>
+          <div class="kpi">
+            <label>Links</label>
+            <strong id="platformCount">0</strong>
+          </div>
+        </div>
 
-document.getElementById('analyzeReferenceBtn').addEventListener('click', async () => {
-  const output = document.getElementById('referenceOutput');
-  try {
-    const response = await apiRequest('/api/reference/analyze', {
-      method: 'POST',
-      body: JSON.stringify({ source: document.getElementById('refSource').value.trim(), style: 'creator-led storytelling' }),
-    });
-    output.textContent = JSON.stringify(response, null, 2);
-    output.classList.remove('hidden');
-    output.classList.add('success');
-  } catch (error) {
-    output.textContent = error.message;
-    output.classList.remove('hidden');
-    output.classList.add('error');
-  }
-});
+        <div class="content-grid">
+          <section class="card">
+            <h3>Projects</h3>
+            <div id="projectList" class="list"></div>
+          </section>
 
-document.getElementById('generatorBriefBtn').addEventListener('click', async () => {
-  const mode = document.getElementById('generatorMode').value;
-  const output = document.getElementById('generatorOutput');
-  try {
-    const result = await apiRequest('/api/generator/brief', {
-      method: 'POST',
-      body: JSON.stringify({ mode }),
-    });
-    output.textContent = `${result.brief.label}: ${result.brief.description} Guardrail: ${result.brief.guardrail}`;
-    output.classList.remove('hidden');
-    output.classList.add('success');
-  } catch (error) {
-    output.textContent = error.message;
-    output.classList.remove('hidden');
-    output.classList.add('error');
-  }
-});
+          <section class="card">
+            <h3>Reference Lab</h3>
+            <input id="refSource" type="text" placeholder="Paste page, account or source link" />
+            <button id="analyzeReferenceBtn" type="button">Analyze reference</button>
+            <div id="referenceOutput" class="message hidden"></div>
 
-async function connectPlatform(platform) {
-  const output = document.getElementById('platformOutput');
-  try {
-    const auth = await apiRequest(`/api/connect/${platform}`, { method: 'GET' });
-    output.textContent = `${platform} mock connect ready: ${auth.authUrl}`;
-    output.classList.remove('hidden');
-    output.classList.add('success');
+            <h3 class="section-inline">Reality Generator</h3>
+            <select id="generatorMode">
+              <option value="photorealistic">Photorealistic</option>
+              <option value="cartoon3d">3D Cartoon</option>
+              <option value="animation">Animation</option>
+              <option value="sports">Sports</option>
+            </select>
+            <button id="generatorBriefBtn" type="button">Generate brief</button>
+            <div id="generatorOutput" class="message hidden"></div>
 
-    await apiRequest(`/api/connect/${platform}/callback`, {
-      method: 'POST',
-      body: JSON.stringify({ accountName: `${platform} Creator` }),
-    });
-  } catch (error) {
-    output.textContent = error.message;
-    output.classList.remove('hidden');
-    output.classList.add('error');
-  }
-}
+            <h3 class="section-inline">Platform links</h3>
+            <button id="connectYoutube" type="button">Connect YouTube</button>
+            <button id="connectTikTok" type="button">Connect TikTok</button>
+            <button id="connectInstagram" type="button">Connect Instagram</button>
+            <div id="platformOutput" class="message hidden"></div>
+          </section>
+        </div>
+      </main>
+    </div>
 
-document.getElementById('connectYoutube').addEventListener('click', () => connectPlatform('youtube'));
-document.getElementById('connectTikTok').addEventListener('click', () => connectPlatform('tiktok'));
-document.getElementById('connectInstagram').addEventListener('click', () => connectPlatform('instagram'));
-
-setAuthMode('login');
-checkSession();
+    <script src="/app.js"></script>
+  </body>
+</html>

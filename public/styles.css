@@ -1,537 +1,346 @@
-body {
-  margin: 0;
-  font-family: Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-  background: #070b13;
-  color: #ecf2ff;
-}
-
-* {
-  box-sizing: border-box;
-}
-
-button, input, select, textarea {
-  font: inherit;
-}
-
-a {
-  color: inherit;
-  text-decoration: none;
-}
-
-.landing-page {
-  min-height: 100vh;
-  background:
-    radial-gradient(circle at top, rgba(66, 135, 245, 0.35), transparent 35%),
-    linear-gradient(180deg, #050b14 0%, #101b2f 100%);
-}
-
-.topbar {
-  width: min(1200px, calc(100% - 40px));
-  margin: 0 auto;
-  padding: 28px 0 18px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-}
-
-.brand-wrap {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-}
-
-.brand-mark {
-  width: 42px;
-  height: 42px;
-  border-radius: 12px;
-  display: grid;
-  place-items: center;
-  background: linear-gradient(135deg, #7ab6ff, #4a7dff);
-  color: #071321;
-  font-weight: 800;
-}
-
-.brand-name {
-  font-weight: 700;
-}
-
-.brand-tag {
-  font-size: 12px;
-  opacity: 0.7;
-}
-
-nav {
-  display: flex;
-  align-items: center;
-  gap: 18px;
-  opacity: 0.9;
-}
-
-.nav-button,
-.primary,
-.secondary {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: 10px;
-  padding: 12px 18px;
-  transition: transform 0.2s ease, opacity 0.2s ease;
-}
-
-.nav-button,
-.primary {
-  background: linear-gradient(135deg, #7ab6ff, #4a7dff);
-  color: #06111d;
-  font-weight: 700;
-}
-
-.secondary {
-  background: rgba(255, 255, 255, 0.08);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-}
-
-.primary:hover,
-.secondary:hover,
-.nav-button:hover {
-  transform: translateY(-1px);
-}
-
-.hero {
-  width: min(1200px, calc(100% - 40px));
-  margin: 0 auto;
-  padding: 40px 0 60px;
-  display: grid;
-  grid-template-columns: 1.2fr 0.8fr;
-  gap: 32px;
-  align-items: center;
-}
-
-.hero-copy h1 {
-  font-size: clamp(2.5rem, 5vw, 4.8rem);
-  margin: 14px 0 18px;
-  line-height: 1.03;
-}
-
-.hero-copy p {
-  max-width: 700px;
-  color: rgba(236, 242, 255, 0.8);
-  font-size: 1.06rem;
-  line-height: 1.7;
-}
-
-.eyebrow {
-  display: inline-flex;
-  padding: 7px 12px;
-  font-size: 12px;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  background: rgba(122, 182, 255, 0.12);
-  border: 1px solid rgba(122, 182, 255, 0.2);
-  border-radius: 999px;
-  color: #8fcbff;
-}
-
-.cta-row {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 12px;
-  margin-top: 28px;
-}
-
-.mini-stats {
-  list-style: none;
-  padding: 0;
-  margin: 28px 0 0;
-  display: flex;
-  flex-wrap: wrap;
-  gap: 18px;
-}
-
-.mini-stats li {
-  min-width: 140px;
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-  color: rgba(236, 242, 255, 0.8);
-}
-
-.mini-stats strong {
-  font-size: 1.5rem;
-  color: #fff;
-}
-
-.panel {
-  background: rgba(15, 24, 40, 0.82);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  border-radius: 20px;
-  box-shadow: 0 18px 40px rgba(2, 8, 17, 0.45);
-}
-
-.hero-card {
-  padding: 24px;
-}
-
-.card-header {
-  color: rgba(236, 242, 255, 0.8);
-  font-size: 12px;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  margin-bottom: 16px;
-}
-
-.timeline-mini {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  margin-bottom: 20px;
-}
-
-.timeline-mini .bar {
-  display: block;
-  height: 44px;
-  border-radius: 12px;
-  background: linear-gradient(180deg, #6fa7ff, #4565f1);
-}
-
-.timeline-mini .bar.short { width: 20%; }
-.timeline-mini .bar.med { width: 26%; }
-.timeline-mini .bar.long { width: 36%; }
-.timeline-mini .bar.med { width: 18%; }
-
-.metric-grid {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(100px, 1fr));
-  gap: 16px;
-}
-
-.metric-grid label {
-  display: block;
-  color: rgba(236, 242, 255, 0.6);
-  font-size: 12px;
-  margin-bottom: 6px;
-}
-
-.metric-grid strong {
-  font-size: 1.2rem;
-}
-
-.status-pill {
-  margin-top: 18px;
-  display: inline-flex;
-  padding: 9px 12px;
-  border-radius: 999px;
-  font-size: 12px;
-  letter-spacing: 0.04em;
-  background: rgba(47, 209, 128, 0.15);
-  color: #73f3b3;
-  border: 1px solid rgba(47, 209, 128, 0.25);
-}
-
-.features,
-.rights,
-.connectors {
-  width: min(1200px, calc(100% - 40px));
-  margin: 0 auto 30px;
-  padding: 28px;
-}
-
-.section-title {
-  margin-bottom: 24px;
-}
-
-.section-title h2 {
-  margin-top: 12px;
-  font-size: clamp(2rem, 4vw, 3rem);
-}
-
-.feature-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-  gap: 18px;
-}
-
-.feature-grid article {
-  padding: 20px;
-  border-radius: 16px;
-  background: rgba(255, 255, 255, 0.02);
-  border: 1px solid rgba(255, 255, 255, 0.05);
-}
-
-.feature-grid h3 {
-  margin-top: 0;
-  font-size: 1.2rem;
-}
-
-.feature-grid p,
-.rights-list {
-  color: rgba(236, 242, 255, 0.7);
-  line-height: 1.6;
-}
-
-.rights-list {
-  list-style: disc;
-  padding-left: 18px;
-  margin: 0;
-}
-
-.connector-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
-  gap: 16px;
-}
-
-.connector-grid span {
-  display: grid;
-  place-items: center;
-  min-height: 72px;
-  border-radius: 14px;
-  background: rgba(255, 255, 255, 0.03);
-  border: 1px solid rgba(255, 255, 255, 0.05);
-  font-weight: 600;
-}
-
-body.app-body {
-  background: #0a1220;
-}
-
-.app-shell {
-  width: min(1400px, calc(100% - 32px));
-  margin: 24px auto;
-  display: grid;
-  grid-template-columns: 320px 1fr;
-  gap: 24px;
-}
-
-.sidebar,
-.main-panel {
-  background: rgba(15, 24, 40, 0.9);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  border-radius: 22px;
-  box-shadow: 0 18px 40px rgba(0, 0, 0, 0.2);
-}
-
-.sidebar {
-  padding: 22px;
-}
-
-.brand-line {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  margin-bottom: 22px;
-}
-
-.sidebar .brand-mark {
-  width: 38px;
-  height: 38px;
-}
-
-.sidebar nav {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  gap: 12px;
-  margin: 30px 0;
-}
-
-.sidebar nav a {
-  color: rgba(236, 242, 255, 0.8);
-  padding: 9px 12px;
-  width: 100%;
-  border-radius: 10px;
-}
-
-.sidebar nav a.active {
-  background: rgba(122, 182, 255, 0.14);
-  color: #dfeeff;
-}
-
-.form-card {
-  margin-top: 18px;
-}
-
-.form-card h3 {
-  margin-bottom: 12px;
-}
-
-.form-card input,
-.form-card select,
-.form-card textarea,
-.form-card button {
-  width: 100%;
-  border-radius: 10px;
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  background: rgba(255, 255, 255, 0.03);
-  color: white;
-  padding: 10px 12px;
-  margin-bottom: 10px;
-}
-
-.form-card button {
-  background: linear-gradient(135deg, #7ab6ff, #4a7dff);
-  color: #06111d;
-  font-weight: 700;
-  border: 0;
-  cursor: pointer;
-}
-
-.main-panel {
-  padding: 26px;
-}
-
-.top-actions {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: 12px;
-  margin-bottom: 20px;
-}
-
-.kpi-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
-  gap: 16px;
-  margin-bottom: 26px;
-}
-
-.kpi {
-  padding: 18px;
-  border-radius: 14px;
-  background: rgba(255, 255, 255, 0.02);
-  border: 1px solid rgba(255, 255, 255, 0.06);
-}
-
-.kpi label {
-  display: block;
-  color: rgba(236, 242, 255, 0.6);
-  font-size: 12px;
-  margin-bottom: 6px;
-}
-
-.kpi strong {
-  font-size: 1.7rem;
-}
-
-.content-grid {
-  display: grid;
-  grid-template-columns: 1.15fr 0.85fr;
-  gap: 22px;
-}
-
-.card {
-  padding: 18px;
-  border-radius: 18px;
-  background: rgba(255, 255, 255, 0.02);
-  border: 1px solid rgba(255, 255, 255, 0.06);
-}
-
-.card h3 {
-  margin-top: 0;
-}
-
-.list {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-}
-
-.item {
-  padding: 12px 14px;
-  border-radius: 12px;
-  background: rgba(255, 255, 255, 0.02);
-  border: 1px solid rgba(255, 255, 255, 0.05);
-}
-
-.status {
-  display: inline-flex;
-  padding: 5px 8px;
-  border-radius: 999px;
-  font-size: 11px;
-  margin-top: 8px;
-}
-
-.status.draft { background: rgba(255, 177, 66, 0.12); color: #ffca74; }
-.status.approved { background: rgba(70, 221, 130, 0.12); color: #74f3b3; }
-.status.failed { background: rgba(255, 109, 109, 0.12); color: #ff9b9b; }
-.status.ready { background: rgba(95, 137, 255, 0.12); color: #a8c0ff; }
-
-.hidden {
-  display: none !important;
-}
-
-.auth-shell {
-  min-height: 100vh;
-  display: grid;
-  place-items: center;
-  background: linear-gradient(180deg, rgba(7, 11, 19, 0.94), rgba(14, 22, 33, 0.96));
-}
-
-.auth-card {
-  width: min(440px, calc(100% - 36px));
-  padding: 28px;
-  border-radius: 22px;
-  background: rgba(15, 24, 40, 0.9);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-}
-
-.auth-card h2 {
-  margin-top: 8px;
-  margin-bottom: 18px;
-}
-
-.auth-actions {
-  display: flex;
-  gap: 8px;
-  margin-bottom: 18px;
-}
-
-.auth-actions button {
-  flex: 1;
-  padding: 10px 10px;
-  border-radius: 10px;
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  background: rgba(255, 255, 255, 0.03);
-  color: white;
-  cursor: pointer;
-}
-
-.auth-actions button.active {
-  background: linear-gradient(135deg, #7ab6ff, #4a7dff);
-  color: #071321;
-}
-
-.message {
-  margin-top: 10px;
-  padding: 10px 12px;
-  border-radius: 10px;
-  background: rgba(255, 255, 255, 0.04);
-  color: rgba(236, 242, 255, 0.8);
-}
-
-.message.error {
-  background: rgba(255, 109, 109, 0.08);
-  color: #ffb3b3;
-}
-
-.message.success {
-  background: rgba(74, 212, 134, 0.08);
-  color: #aeffd3;
-}
-
-@media (max-width: 980px) {
-  .app-shell,
-  .hero,
-  .content-grid {
-    grid-template-columns: 1fr;
+const authView = document.getElementById('authView');
+const appView = document.getElementById('appView');
+const authForm = document.getElementById('authForm');
+const authMessage = document.getElementById('authMessage');
+const showLoginBtn = document.getElementById('showLogin');
+const showSignupBtn = document.getElementById('showSignup');
+const emailInput = document.getElementById('emailInput');
+const passwordInput = document.getElementById('passwordInput');
+const projectList = document.getElementById('projectList');
+const projectCount = document.getElementById('projectCount');
+const reviewCount = document.getElementById('reviewCount');
+const scheduledCount = document.getElementById('scheduledCount');
+const platformCount = document.getElementById('platformCount');
+const welcomeTitle = document.getElementById('welcomeTitle');
+
+let authMode = 'login';
+let csrfToken = '';
+
+function setMessage(element, text, type = 'info') {
+  element.textContent = text;
+  element.classList.remove('hidden');
+  element.classList.remove('success', 'error');
+  if (type === 'success') element.classList.add('success');
+  if (type === 'error') element.classList.add('error');
+}
+
+function clearMessage(element) {
+  element.textContent = '';
+  element.classList.add('hidden');
+}
+
+async function apiRequest(url, options = {}) {
+  const headers = { ...(options.headers || {}) };
+  if (!headers['Content-Type'] && !(options.body instanceof FormData)) {
+    headers['Content-Type'] = 'application/json';
+  }
+  if (csrfToken) headers['x-csrf-token'] = csrfToken;
+
+  const response = await fetch(url, { ...options, headers });
+  const contentType = response.headers.get('content-type') || '';
+  const payload = contentType.includes('application/json') ? await response.json() : await response.text();
+
+  if (!response.ok) {
+    throw new Error(payload.error || payload || 'Request failed');
   }
 
-  .topbar {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 18px;
+  return payload;
+}
+
+function setAuthMode(mode) {
+  authMode = mode;
+  showLoginBtn.classList.toggle('active', mode === 'login');
+  showSignupBtn.classList.toggle('active', mode === 'signup');
+  const submitButton = authForm.querySelector('button[type="submit"]');
+  submitButton.textContent = mode === 'login' ? 'Sign in' : 'Create account';
+}
+
+async function checkSession() {
+  try {
+    const session = await apiRequest('/api/session');
+    if (session.user) {
+      welcomeTitle.textContent = `Welcome, ${session.user.email}`;
+      authView.classList.add('hidden');
+      appView.classList.remove('hidden');
+      loadProjects();
+      loadPlatforms();
+      return;
+    }
+  } catch (error) {
+    console.warn('No active session');
   }
 
-  nav {
-    flex-wrap: wrap;
+  authView.classList.remove('hidden');
+  appView.classList.add('hidden');
+}
+
+showLoginBtn.addEventListener('click', () => setAuthMode('login'));
+showSignupBtn.addEventListener('click', () => setAuthMode('signup'));
+
+authForm.addEventListener('submit', async (event) => {
+  event.preventDefault();
+  clearMessage(authMessage);
+
+  const email = emailInput.value.trim();
+  const password = passwordInput.value.trim();
+
+  try {
+    const endpoint = authMode === 'login' ? '/api/auth/login' : '/api/auth/signup';
+    const data = await apiRequest(endpoint, {
+      method: 'POST',
+      body: JSON.stringify({ email, password }),
+    });
+
+    csrfToken = data.csrfToken || '';
+    welcomeTitle.textContent = `Welcome, ${data.user.email}`;
+    authView.classList.add('hidden');
+    appView.classList.remove('hidden');
+    emailInput.value = '';
+    passwordInput.value = '';
+    loadProjects();
+    loadPlatforms();
+  } catch (error) {
+    setMessage(authMessage, error.message, 'error');
+  }
+});
+
+async function loadProjects() {
+  try {
+    const data = await apiRequest('/api/projects');
+    const projects = data.projects || [];
+    projectCount.textContent = String(projects.length);
+    reviewCount.textContent = String(projects.filter((project) => ['approved', 'ready_for_review'].includes(project.status)).length);
+    scheduledCount.textContent = String(projects.filter((project) => project.status === 'scheduled').length);
+
+    if (!projects.length) {
+      projectList.innerHTML = '<div class="item">No projects yet. Create one from the left panel.</div>';
+      return;
+    }
+
+    projectList.innerHTML = projects.map(async (project) => {
+      const uploadData = await fetchProjectUploads(project.id);
+      const uploadText = uploadData.length ? `Uploads: ${uploadData.map((u) => u.filename).join(', ')}` : 'No footage attached';
+      return `
+        <div class="item">
+          <strong>${project.title}</strong>
+          <div>Platform: ${project.platform}</div>
+          <div>Rights: ${project.rightsConfirmed ? 'confirmed' : 'missing'}</div>
+          <div>${uploadText}</div>
+          <span class="status ${project.status === 'approved' ? 'approved' : project.status === 'failed' ? 'failed' : 'draft'}">${project.status || 'draft'}</span>
+          <div class="project-actions">
+            <button type="button" data-render-id="${project.id}">Render</button>
+          </div>
+        </div>
+      `;
+    }).join('');
+
+    projectList.innerHTML = await Promise.all(projects.map(async (project) => {
+      const uploadData = await fetchProjectUploads(project.id);
+      const uploadText = uploadData.length ? `Uploads: ${uploadData.map((u) => u.filename).join(', ')}` : 'No footage attached';
+      return `
+        <div class="item">
+          <strong>${project.title}</strong>
+          <div>Platform: ${project.platform}</div>
+          <div>Rights: ${project.rightsConfirmed ? 'confirmed' : 'missing'}</div>
+          <div>${uploadText}</div>
+          <span class="status ${project.status === 'approved' ? 'approved' : project.status === 'failed' ? 'failed' : 'draft'}">${project.status || 'draft'}</span>
+          <div class="project-actions">
+            <button type="button" data-render-id="${project.id}">Render</button>
+          </div>
+        </div>
+      `;
+    })).then((rows) => rows.join(''));
+
+    projectList.querySelectorAll('[data-render-id]').forEach((button) => {
+      button.addEventListener('click', async () => {
+        try {
+          const result = await apiRequest(`/api/projects/${button.dataset.renderId}/render`, {
+            method: 'POST',
+            body: JSON.stringify({}),
+          });
+          setMessage(document.getElementById('platformOutput'), `Render: ${result.render.status} — ${result.render.message}`, result.render.status === 'rendered' ? 'success' : 'error');
+          loadProjects();
+        } catch (error) {
+          setMessage(document.getElementById('platformOutput'), error.message, 'error');
+        }
+      });
+    });
+  } catch (error) {
+    console.error('Failed to load projects', error);
   }
 }
+
+async function fetchProjectUploads(projectId) {
+  try {
+    const data = await apiRequest(`/api/projects/${projectId}`);
+    return data.uploads || [];
+  } catch (error) {
+    return [];
+  }
+}
+
+async function loadPlatforms() {
+  try {
+    const data = await apiRequest('/api/platforms');
+    const count = Object.keys(data.platforms || {}).length;
+    platformCount.textContent = String(count);
+  } catch (error) {
+    platformCount.textContent = '0';
+  }
+}
+
+document.getElementById('createProjectBtn').addEventListener('click', async () => {
+  const payload = {
+    title: document.getElementById('projectTitle').value.trim(),
+    platform: document.getElementById('projectPlatform').value.trim() || 'YouTube',
+    ownershipConfirmation: document.getElementById('projectRights').value.trim(),
+    rightsConfirmed: document.getElementById('rightsConfirmed').checked,
+    musicTitle: document.getElementById('musicTitle').value.trim() || null,
+    musicLicense: document.getElementById('musicLicense').value.trim() || null,
+    musicPermission: document.getElementById('musicPermission').checked,
+  };
+
+  try {
+    const result = await apiRequest('/api/projects', {
+      method: 'POST',
+      body: JSON.stringify(payload),
+    });
+
+    document.getElementById('projectTitle').value = '';
+    document.getElementById('projectPlatform').value = '';
+    document.getElementById('projectRights').value = '';
+    document.getElementById('rightsConfirmed').checked = false;
+    document.getElementById('musicTitle').value = '';
+    document.getElementById('musicLicense').value = '';
+    document.getElementById('musicPermission').checked = false;
+
+    setMessage(document.getElementById('platformOutput'), `Project created: ${result.project.title}`, 'success');
+    loadProjects();
+  } catch (error) {
+    setMessage(document.getElementById('platformOutput'), error.message, 'error');
+  }
+});
+
+document.getElementById('attachUploadBtn').addEventListener('click', async () => {
+  const projectId = document.querySelector('[data-render-id]')?.dataset.renderId || null;
+  const uploadName = document.getElementById('uploadFileName').value.trim();
+  const uploadType = document.getElementById('uploadFileType').value.trim() || 'video/mp4';
+  const uploadSize = Number(document.getElementById('uploadFileSize').value || 0);
+
+  if (!projectId) {
+    setMessage(document.getElementById('platformOutput'), 'Create a project first, then attach footage.', 'error');
+    return;
+  }
+
+  try {
+    const upload = await apiRequest(`/api/projects/${projectId}/upload`, {
+      method: 'POST',
+      body: JSON.stringify({ filename: uploadName || 'source-video.mp4', type: uploadType, size: uploadSize }),
+    });
+    setMessage(document.getElementById('platformOutput'), `Footage attached: ${upload.upload.filename}`, 'success');
+    document.getElementById('uploadFileName').value = '';
+    document.getElementById('uploadFileType').value = '';
+    document.getElementById('uploadFileSize').value = '';
+    loadProjects();
+  } catch (error) {
+    setMessage(document.getElementById('platformOutput'), error.message, 'error');
+  }
+});
+
+document.getElementById('logoutBtn').addEventListener('click', async () => {
+  try {
+    await apiRequest('/api/auth/logout', { method: 'POST' });
+    csrfToken = '';
+    checkSession();
+  } catch (error) {
+    console.error(error);
+  }
+});
+
+document.getElementById('logoutEverywhereBtn').addEventListener('click', async () => {
+  try {
+    await apiRequest('/api/auth/logout-everywhere', { method: 'POST' });
+    csrfToken = '';
+    checkSession();
+  } catch (error) {
+    console.error(error);
+  }
+});
+
+document.getElementById('analyzeReferenceBtn').addEventListener('click', async () => {
+  const output = document.getElementById('referenceOutput');
+  try {
+    const response = await apiRequest('/api/reference/analyze', {
+      method: 'POST',
+      body: JSON.stringify({ source: document.getElementById('refSource').value.trim(), style: 'creator-led storytelling' }),
+    });
+    output.textContent = JSON.stringify(response, null, 2);
+    output.classList.remove('hidden');
+    output.classList.add('success');
+  } catch (error) {
+    output.textContent = error.message;
+    output.classList.remove('hidden');
+    output.classList.add('error');
+  }
+});
+
+document.getElementById('generatorBriefBtn').addEventListener('click', async () => {
+  const mode = document.getElementById('generatorMode').value;
+  const output = document.getElementById('generatorOutput');
+  try {
+    const result = await apiRequest('/api/generator/brief', {
+      method: 'POST',
+      body: JSON.stringify({ mode }),
+    });
+    output.textContent = `${result.brief.label}: ${result.brief.description} Guardrail: ${result.brief.guardrail}`;
+    output.classList.remove('hidden');
+    output.classList.add('success');
+  } catch (error) {
+    output.textContent = error.message;
+    output.classList.remove('hidden');
+    output.classList.add('error');
+  }
+});
+
+async function connectPlatform(platform) {
+  const output = document.getElementById('platformOutput');
+  try {
+    const auth = await apiRequest(`/api/connect/${platform}`, { method: 'GET' });
+    output.textContent = `${platform} mock connect ready: ${auth.authUrl}`;
+    output.classList.remove('hidden');
+    output.classList.add('success');
+
+    await apiRequest(`/api/connect/${platform}/callback`, {
+      method: 'POST',
+      body: JSON.stringify({ accountName: `${platform} Creator` }),
+    });
+  } catch (error) {
+    output.textContent = error.message;
+    output.classList.remove('hidden');
+    output.classList.add('error');
+  }
+}
+
+document.getElementById('connectYoutube').addEventListener('click', () => connectPlatform('youtube'));
+document.getElementById('connectTikTok').addEventListener('click', () => connectPlatform('tiktok'));
+document.getElementById('connectInstagram').addEventListener('click', () => connectPlatform('instagram'));
+
+setAuthMode('login');
+checkSession();
+
+window.addEventListener('DOMContentLoaded', () => {
+  document.querySelectorAll('[data-render-id]').forEach((button) => {
+    button.addEventListener('click', async () => {
+      try {
+        const result = await apiRequest(`/api/projects/${button.dataset.renderId}/render`, {
+          method: 'POST',
+          body: JSON.stringify({}),
+        });
+        setMessage(document.getElementById('platformOutput'), `Render: ${result.render.status} — ${result.render.message}`, result.render.status === 'rendered' ? 'success' : 'error');
+        loadProjects();
+      } catch (error) {
+        setMessage(document.getElementById('platformOutput'), error.message, 'error');
+      }
+    });
+  });
+});
