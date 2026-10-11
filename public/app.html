@@ -1,4 +1,4 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
@@ -25,7 +25,7 @@
         <form id="authForm">
           <input id="emailInput" type="email" placeholder="you@example.com" required />
           <input id="passwordInput" type="password" placeholder="Password" required />
-          <button id="submitAuth" type="submit">Continue</button>
+          <button type="submit">Continue</button>
         </form>
 
         <div id="authMessage" class="message hidden"></div>
@@ -38,7 +38,7 @@
           <div class="brand-mark">CF</div>
           <div>
             <div class="brand-name">ClipForge Studio</div>
-            <div class="brand-tag">Creator cockpit</div>
+            <div class="brand-tag">creator cockpit</div>
           </div>
         </div>
 
@@ -53,12 +53,12 @@
         <div class="form-card">
           <h3>New project</h3>
           <input id="projectTitle" type="text" placeholder="Project title" />
-          <input id="projectPlatform" type="text" placeholder="Platform: YouTube / TikTok / Reels" />
+          <input id="projectPlatform" type="text" placeholder="YouTube / TikTok / Reels" />
           <textarea id="projectRights" rows="3" placeholder="Ownership confirmation note"></textarea>
-          <label><input id="rightsConfirmed" type="checkbox" /> I confirm rights</label>
+          <label class="checkbox-row"><input id="rightsConfirmed" type="checkbox" /> I confirm rights</label>
           <input id="musicTitle" type="text" placeholder="Music title" />
           <input id="musicLicense" type="text" placeholder="License" />
-          <label><input id="musicPermission" type="checkbox" /> Permission granted</label>
+          <label class="checkbox-row"><input id="musicPermission" type="checkbox" /> Permission granted</label>
           <button id="createProjectBtn" type="button">Save project</button>
         </div>
 
@@ -75,7 +75,7 @@
             <div class="eyebrow">Studio</div>
             <h2 id="welcomeTitle">Welcome</h2>
           </div>
-          <div class="status-pill ready">Local mode</div>
+          <div class="status-pill ready">Local production mode</div>
         </div>
 
         <div class="kpi-grid">
@@ -84,7 +84,7 @@
             <strong id="projectCount">0</strong>
           </div>
           <div class="kpi">
-            <label>Ready for review</label>
+            <label>Ready</label>
             <strong id="reviewCount">0</strong>
           </div>
           <div class="kpi">
@@ -92,7 +92,7 @@
             <strong id="scheduledCount">0</strong>
           </div>
           <div class="kpi">
-            <label>Platform links</label>
+            <label>Links</label>
             <strong id="platformCount">0</strong>
           </div>
         </div>
@@ -109,7 +109,7 @@
             <button id="analyzeReferenceBtn" type="button">Analyze reference</button>
             <div id="referenceOutput" class="message hidden"></div>
 
-            <h3 style="margin-top: 16px;">Reality Generator</h3>
+            <h3 class="section-inline">Reality Generator</h3>
             <select id="generatorMode">
               <option value="photorealistic">Photorealistic</option>
               <option value="cartoon3d">3D Cartoon</option>
@@ -119,7 +119,7 @@
             <button id="generatorBriefBtn" type="button">Generate brief</button>
             <div id="generatorOutput" class="message hidden"></div>
 
-            <h3 style="margin-top: 16px;">Platform links</h3>
+            <h3 class="section-inline">Platform links</h3>
             <button id="connectYoutube" type="button">Connect YouTube</button>
             <button id="connectTikTok" type="button">Connect TikTok</button>
             <button id="connectInstagram" type="button">Connect Instagram</button>

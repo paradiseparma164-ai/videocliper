@@ -6,8 +6,6 @@ const showLoginBtn = document.getElementById('showLogin');
 const showSignupBtn = document.getElementById('showSignup');
 const emailInput = document.getElementById('emailInput');
 const passwordInput = document.getElementById('passwordInput');
-const submitAuth = document.getElementById('submitAuth');
-
 const projectList = document.getElementById('projectList');
 const projectCount = document.getElementById('projectCount');
 const reviewCount = document.getElementById('reviewCount');
@@ -17,7 +15,6 @@ const welcomeTitle = document.getElementById('welcomeTitle');
 
 let authMode = 'login';
 let csrfToken = '';
-let currentUser = null;
 
 function setMessage(element, text, type = 'info') {
   element.textContent = text;
@@ -33,44 +30,48 @@ function clearMessage(element) {
 }
 
 async function apiRequest(url, options = {}) {
-  const headers = options.headers || {};
-  headers['Content-Type'] = headers['Content-Type'] || 'application/json';
+  const headers = { ...(options.headers || {}) };
+  if (!headers['Content-Type'] && !(options.body instanceof FormData)) {
+    headers['Content-Type'] = 'application/json';
+  }
   if (csrfToken) headers['x-csrf-token'] = csrfToken;
+
   const response = await fetch(url, { ...options, headers });
   const contentType = response.headers.get('content-type') || '';
   const payload = contentType.includes('application/json') ? await response.json() : await response.text();
+
   if (!response.ok) {
     throw new Error(payload.error || payload || 'Request failed');
   }
-  return payload;
-}
 
-async function checkSession() {
-  try {
-    const session = await apiRequest('/api/session');
-    if (session.user) {
-      currentUser = session.user;
-      welcomeTitle.textContent = `Welcome, ${session.user.email}`;
-      authView.classList.add('hidden');
-      appView.classList.remove('hidden');
-      loadProjects();
-      loadPlatforms();
-    } else {
-      currentUser = null;
-      authView.classList.remove('hidden');
-      appView.classList.add('hidden');
-    }
-  } catch (error) {
-    authView.classList.remove('hidden');
-    appView.classList.add('hidden');
-  }
+  return payload;
 }
 
 function setAuthMode(mode) {
   authMode = mode;
   showLoginBtn.classList.toggle('active', mode === 'login');
   showSignupBtn.classList.toggle('active', mode === 'signup');
-  submitAuth.textContent = mode === 'login' ? 'Sign in' : 'Create account';
+  const submitButton = authForm.querySelector('button[type="submit"]');
+  submitButton.textContent = mode === 'login' ? 'Sign in' : 'Create account';
+}
+
+async function checkSession() {
+  try {
+    const session = await apiRequest('/api/session');
+    if (session.user) {
+      welcomeTitle.textContent = `Welcome, ${session.user.email}`;
+      authView.classList.add('hidden');
+      appView.classList.remove('hidden');
+      loadProjects();
+      loadPlatforms();
+      return;
+    }
+  } catch (error) {
+    console.warn('No active session');
+  }
+
+  authView.classList.remove('hidden');
+  appView.classList.add('hidden');
 }
 
 showLoginBtn.addEventListener('click', () => setAuthMode('login'));
@@ -79,24 +80,25 @@ showSignupBtn.addEventListener('click', () => setAuthMode('signup'));
 authForm.addEventListener('submit', async (event) => {
   event.preventDefault();
   clearMessage(authMessage);
+
   const email = emailInput.value.trim();
   const password = passwordInput.value.trim();
 
   try {
-    const path = authMode === 'login' ? '/api/auth/login' : '/api/auth/signup';
-    const data = await apiRequest(path, {
+    const endpoint = authMode === 'login' ? '/api/auth/login' : '/api/auth/signup';
+    const data = await apiRequest(endpoint, {
       method: 'POST',
       body: JSON.stringify({ email, password }),
     });
+
     csrfToken = data.csrfToken || '';
-    currentUser = data.user;
-    welcomeTitle.textContent = `Welcome, ${currentUser.email}`;
+    welcomeTitle.textContent = `Welcome, ${data.user.email}`;
     authView.classList.add('hidden');
     appView.classList.remove('hidden');
-    loadProjects();
-    loadPlatforms();
     emailInput.value = '';
     passwordInput.value = '';
+    loadProjects();
+    loadPlatforms();
   } catch (error) {
     setMessage(authMessage, error.message, 'error');
   }
@@ -107,11 +109,11 @@ async function loadProjects() {
     const data = await apiRequest('/api/projects');
     const projects = data.projects || [];
     projectCount.textContent = String(projects.length);
-    reviewCount.textContent = String(projects.filter((p) => p.status === 'ready_for_review' || p.status === 'approved').length);
-    scheduledCount.textContent = String(projects.filter((p) => p.status === 'scheduled').length);
+    reviewCount.textContent = String(projects.filter((project) => ['approved', 'ready_for_review'].includes(project.status)).length);
+    scheduledCount.textContent = String(projects.filter((project) => project.status === 'scheduled').length);
 
     if (!projects.length) {
-      projectList.innerHTML = '<div class="item">No projects yet. Create one on the left.</div>';
+      projectList.innerHTML = '<div class="item">No projects yet. Create one from the left panel.</div>';
       return;
     }
 
@@ -121,7 +123,7 @@ async function loadProjects() {
         <div>Platform: ${project.platform}</div>
         <div>Rights: ${project.rightsConfirmed ? 'confirmed' : 'missing'}</div>
         <span class="status ${project.status === 'approved' ? 'approved' : project.status === 'failed' ? 'failed' : 'draft'}">${project.status || 'draft'}</span>
-        <div style="margin-top: 8px; display: flex; gap: 8px; flex-wrap: wrap;">
+        <div class="project-actions">
           <button type="button" data-render-id="${project.id}">Render</button>
         </div>
       </div>
@@ -130,8 +132,11 @@ async function loadProjects() {
     projectList.querySelectorAll('[data-render-id]').forEach((button) => {
       button.addEventListener('click', async () => {
         try {
-          const result = await apiRequest(`/api/projects/${button.dataset.renderId}/render`, { method: 'POST', body: JSON.stringify({}) });
-          setMessage(document.getElementById('platformOutput'), `Render status: ${result.render.status} — ${result.render.message}`, result.render.status === 'rendered' ? 'success' : 'error');
+          const result = await apiRequest(`/api/projects/${button.dataset.renderId}/render`, {
+            method: 'POST',
+            body: JSON.stringify({}),
+          });
+          setMessage(document.getElementById('platformOutput'), `Render: ${result.render.status} — ${result.render.message}`, result.render.status === 'rendered' ? 'success' : 'error');
           loadProjects();
         } catch (error) {
           setMessage(document.getElementById('platformOutput'), error.message, 'error');
@@ -139,7 +144,7 @@ async function loadProjects() {
       });
     });
   } catch (error) {
-    console.error(error);
+    console.error('Failed to load projects', error);
   }
 }
 
@@ -154,27 +159,22 @@ async function loadPlatforms() {
 }
 
 document.getElementById('createProjectBtn').addEventListener('click', async () => {
-  const title = document.getElementById('projectTitle').value.trim();
-  const platform = document.getElementById('projectPlatform').value.trim();
-  const rights = document.getElementById('projectRights').value.trim();
-  const rightsConfirmed = document.getElementById('rightsConfirmed').checked;
-  const musicTitle = document.getElementById('musicTitle').value.trim();
-  const musicLicense = document.getElementById('musicLicense').value.trim();
-  const musicPermission = document.getElementById('musicPermission').checked;
+  const payload = {
+    title: document.getElementById('projectTitle').value.trim(),
+    platform: document.getElementById('projectPlatform').value.trim() || 'YouTube',
+    ownershipConfirmation: document.getElementById('projectRights').value.trim(),
+    rightsConfirmed: document.getElementById('rightsConfirmed').checked,
+    musicTitle: document.getElementById('musicTitle').value.trim() || null,
+    musicLicense: document.getElementById('musicLicense').value.trim() || null,
+    musicPermission: document.getElementById('musicPermission').checked,
+  };
 
   try {
     await apiRequest('/api/projects', {
       method: 'POST',
-      body: JSON.stringify({
-        title,
-        platform,
-        ownershipConfirmation: rights,
-        rightsConfirmed,
-        musicTitle,
-        musicLicense,
-        musicPermission,
-      }),
+      body: JSON.stringify(payload),
     });
+
     document.getElementById('projectTitle').value = '';
     document.getElementById('projectPlatform').value = '';
     document.getElementById('projectRights').value = '';
@@ -191,7 +191,6 @@ document.getElementById('createProjectBtn').addEventListener('click', async () =
 document.getElementById('logoutBtn').addEventListener('click', async () => {
   try {
     await apiRequest('/api/auth/logout', { method: 'POST' });
-    currentUser = null;
     csrfToken = '';
     checkSession();
   } catch (error) {
@@ -202,7 +201,6 @@ document.getElementById('logoutBtn').addEventListener('click', async () => {
 document.getElementById('logoutEverywhereBtn').addEventListener('click', async () => {
   try {
     await apiRequest('/api/auth/logout-everywhere', { method: 'POST' });
-    currentUser = null;
     csrfToken = '';
     checkSession();
   } catch (error) {
@@ -211,14 +209,13 @@ document.getElementById('logoutEverywhereBtn').addEventListener('click', async (
 });
 
 document.getElementById('analyzeReferenceBtn').addEventListener('click', async () => {
-  const source = document.getElementById('refSource').value.trim();
   const output = document.getElementById('referenceOutput');
   try {
-    const result = await apiRequest('/api/reference/analyze', {
+    const response = await apiRequest('/api/reference/analyze', {
       method: 'POST',
-      body: JSON.stringify({ source, style: 'creator-led storytelling' }),
+      body: JSON.stringify({ source: document.getElementById('refSource').value.trim(), style: 'creator-led storytelling' }),
     });
-    output.textContent = JSON.stringify(result, null, 2);
+    output.textContent = JSON.stringify(response, null, 2);
     output.classList.remove('hidden');
     output.classList.add('success');
   } catch (error) {
@@ -246,59 +243,28 @@ document.getElementById('generatorBriefBtn').addEventListener('click', async () 
   }
 });
 
-document.getElementById('connectYoutube').addEventListener('click', async () => {
+async function connectPlatform(platform) {
   const output = document.getElementById('platformOutput');
   try {
-    const result = await apiRequest('/api/connect/youtube', { method: 'GET' });
-    output.textContent = `YouTube mock connect ready: ${result.authUrl}`;
+    const auth = await apiRequest(`/api/connect/${platform}`, { method: 'GET' });
+    output.textContent = `${platform} mock connect ready: ${auth.authUrl}`;
     output.classList.remove('hidden');
     output.classList.add('success');
-    await apiRequest('/api/connect/youtube/callback', {
-      method: 'POST',
-      body: JSON.stringify({ accountName: 'ClipForge Creator' }),
-    });
-  } catch (error) {
-    output.textContent = error.message;
-    output.classList.remove('hidden');
-    output.classList.add('error');
-  }
-});
 
-document.getElementById('connectTikTok').addEventListener('click', async () => {
-  const output = document.getElementById('platformOutput');
-  try {
-    const result = await apiRequest('/api/connect/tiktok', { method: 'GET' });
-    output.textContent = `TikTok mock connect ready: ${result.authUrl}`;
-    output.classList.remove('hidden');
-    output.classList.add('success');
-    await apiRequest('/api/connect/tiktok/callback', {
+    await apiRequest(`/api/connect/${platform}/callback`, {
       method: 'POST',
-      body: JSON.stringify({ accountName: 'TikTok Creator' }),
+      body: JSON.stringify({ accountName: `${platform} Creator` }),
     });
   } catch (error) {
     output.textContent = error.message;
     output.classList.remove('hidden');
     output.classList.add('error');
   }
-});
+}
 
-document.getElementById('connectInstagram').addEventListener('click', async () => {
-  const output = document.getElementById('platformOutput');
-  try {
-    const result = await apiRequest('/api/connect/instagram', { method: 'GET' });
-    output.textContent = `Instagram mock connect ready: ${result.authUrl}`;
-    output.classList.remove('hidden');
-    output.classList.add('success');
-    await apiRequest('/api/connect/instagram/callback', {
-      method: 'POST',
-      body: JSON.stringify({ accountName: 'Instagram Creator' }),
-    });
-  } catch (error) {
-    output.textContent = error.message;
-    output.classList.remove('hidden');
-    output.classList.add('error');
-  }
-});
+document.getElementById('connectYoutube').addEventListener('click', () => connectPlatform('youtube'));
+document.getElementById('connectTikTok').addEventListener('click', () => connectPlatform('tiktok'));
+document.getElementById('connectInstagram').addEventListener('click', () => connectPlatform('instagram'));
 
 setAuthMode('login');
 checkSession();
